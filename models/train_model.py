@@ -2,12 +2,17 @@
 import sys
 import os
 import re
+import pickle
 
 import pandas as pd
 from sqlalchemy import create_engine
 import sqlite3 as sql
 
 import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('wordnet')
+
 from nltk import pos_tag, ne_chunk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -25,6 +30,62 @@ from sklearn.pipeline import Pipeline
 from sklearn.pipeline import FeatureUnion
 
 from sklearn.metrics import classification_report
+
+
+class QuestionMarkCount(BaseEstimator, TransformerMixin):
+    '''
+    '''
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        # code here to transform data
+        X_qcount = pd.Series(X).apply(lambda x: x.count('?'))
+
+        return pd.DataFrame(X_qcount)
+
+    
+class ExclamationPointCount(BaseEstimator, TransformerMixin):
+    '''
+    '''
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        # code here to transform data
+        X_expointcount = pd.Series(X).apply(lambda x: x.count('!'))
+
+        return pd.DataFrame(X_expointcount)
+
+    
+class CapitalCount(BaseEstimator, TransformerMixin):
+    '''
+    '''
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        # code here to transform data
+        X_capitalcount = pd.Series(X).apply(lambda text: sum(1 for c in text if c.isupper()))
+
+        return pd.DataFrame(X_capitalcount)
+
+    
+class WordCount(BaseEstimator, TransformerMixin):
+    '''
+    '''
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        # code here to transform data
+        X_wordcount = pd.Series(X).apply(lambda x: len(x.split()))
+
+        return pd.DataFrame(X_wordcount)
 
 
 def load_data(database_filepath):
@@ -49,7 +110,7 @@ def load_data(database_filepath):
     X = df['message'].values
     y = df[labels].values
     
-    return X, y
+    return X, y, labels
 
 
 def tokenize(text):
@@ -112,7 +173,7 @@ def evaluate_model(model, X_test, y_test, category_names):
     # predict results over test set
     y_pred = model.predict(X_test)
     # create a multi-output evaluation report
-    evaluation_report = classification_report(y_test, y_pred, target_names=labels)
+    evaluation_report = classification_report(y_test, y_pred, target_names=category_names)
     
     print(evaluation_report)
 
@@ -124,24 +185,24 @@ def save_model(model, model_filepath):
     '''
     
     filename = 'disaster_response_model.pkl'
-    pickle.dump(final_model, open(filename, 'wb'))
+    pickle.dump(model, open(filename, 'wb'))
 
 
 def main():
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
-        X, Y, category_names = load_data(database_filepath)
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+        X, y, category_names = load_data(database_filepath)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
         
         print('Building model...')
         model = build_model()
         
         print('Training model...')
-        model.fit(X_train, Y_train)
+        model.fit(X_train, y_train)
         
         print('Evaluating model...')
-        evaluate_model(model, X_test, Y_test, category_names)
+        evaluate_model(model, X_test, y_test, category_names)
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)
