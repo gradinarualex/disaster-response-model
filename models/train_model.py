@@ -2,7 +2,7 @@
 import sys
 import os
 import re
-import pickle
+import joblib
 
 import pandas as pd
 from sqlalchemy import create_engine
@@ -33,7 +33,14 @@ from sklearn.metrics import classification_report
 
 
 class QuestionMarkCount(BaseEstimator, TransformerMixin):
-    '''
+    ''' Class that creates a new feature for natural language
+        processing prediciton model. This class counts the 
+        number of question marks in a text.
+        
+        Functions: 
+            fit: returns self
+            transform: count the number of question marks and return as DataFrame
+            
     '''
 
     def fit(self, X, y=None):
@@ -47,7 +54,14 @@ class QuestionMarkCount(BaseEstimator, TransformerMixin):
 
     
 class ExclamationPointCount(BaseEstimator, TransformerMixin):
-    '''
+    ''' Class that creates a new feature for natural language
+        processing prediciton model. This class counts the 
+        number of excalamtion points in a text.
+        
+        Functions: 
+            fit: returns self
+            transform: count the number of excalamtion point and return as DataFrame
+            
     '''
 
     def fit(self, X, y=None):
@@ -61,7 +75,14 @@ class ExclamationPointCount(BaseEstimator, TransformerMixin):
 
     
 class CapitalCount(BaseEstimator, TransformerMixin):
-    '''
+    ''' Class that creates a new feature for natural language
+        processing prediciton model. This class counts the 
+        number of upper case letters in a text.
+        
+        Functions: 
+            fit: returns self
+            transform: count the number of upper case letters and return as DataFrame
+            
     '''
 
     def fit(self, X, y=None):
@@ -75,7 +96,14 @@ class CapitalCount(BaseEstimator, TransformerMixin):
 
     
 class WordCount(BaseEstimator, TransformerMixin):
-    '''
+    ''' Class that creates a new feature for natural language
+        processing prediciton model. This class counts the 
+        number of words in a text.
+        
+        Functions: 
+            fit: returns self
+            transform: count the number of words and return as DataFrame
+            
     '''
 
     def fit(self, X, y=None):
@@ -89,7 +117,19 @@ class WordCount(BaseEstimator, TransformerMixin):
 
 
 def load_data(database_filepath):
-    '''
+    ''' Function used to load data from a database using sql_engine to access
+        an sqlite database file and return the values as features, targets
+        and category labels.
+
+        Args: 
+            database_filepath (string): path to a database to read in 
+            the data from the 'messages' table
+
+        Returns: 
+            X (array): array of features
+            y (array): array of target columns
+            labels (list): list of label strings for each y column
+
     '''
     
     # load data from database
@@ -97,24 +137,24 @@ def load_data(database_filepath):
     conn = create_engine(database_constring)
     df = pd.read_sql_table('messages', conn)
 
-    labels = [col for col in df.columns if col not in ['id', 'message', 'original', 'genre', 'related']]
-
-    # remove y labels with only one class (all 1's or all 0's) from output
-    to_remove = []
-    for label in labels:
-        if df[label].sum() == 0:
-            to_remove.append(label)
-
-    labels = [label for label in labels if label not in to_remove]
-
     X = df['message'].values
-    y = df[labels].values
+    y = df.iloc[:, 4:].values
     
     return X, y, labels
 
 
 def tokenize(text):
-    '''
+    ''' Function to tokenize text.
+        This function converts all text to lower case, removes
+        non-alpha-numeric characters, removes duplicate spaces,
+        tokenizes, stems and lemmatizes words.
+
+        Args: 
+            text (string): path to a database to read in
+
+        Returns: 
+            clean_tokens (list): list of tokenized words
+            
     '''
     
     clean_text = text.lower() # convert all chars to lower case
@@ -137,7 +177,16 @@ def tokenize(text):
 
 
 def build_model():
-    '''
+    ''' Function to build a text classification model.
+        Build pipeline, defines parameters, creates and
+        returns Cross Validation model.
+
+        Args: 
+            None
+
+        Returns: 
+            cv (model): cross-validation classifier model
+            
     '''
     
     # build pipeline
@@ -167,7 +216,20 @@ def build_model():
 
 
 def evaluate_model(model, X_test, y_test, category_names):
-    '''
+    ''' Function to evaluate the performance of our model.
+        Uses classification_report to get recall, precision
+        and f1-score by category and some overall averages
+        Build pipeline, defines parameters, creates and
+        returns Cross Validation model.
+
+        Args: 
+            model: the classification model to be evaluated
+            X_test: test set of features to predict on
+            y_test: correct category values for test set
+            category_names: list of strings representing category names
+
+        Returns: 
+            evaluation_report: report showing model scores
     '''
     
     # predict results over test set
@@ -181,11 +243,19 @@ def evaluate_model(model, X_test, y_test, category_names):
 
 
 def save_model(model, model_filepath):
-    '''
+    ''' Function to save the fitted model to disk.
+    
+        Args: 
+            model: model to be saved on disk
+            model_filepath: file path to where you want to save the model
+
+        Returns: 
+            None
+            
     '''
     
     filename = 'disaster_response_model.pkl'
-    pickle.dump(model, open(filename, 'wb'))
+    joblib.dump(model, filename)
 
 
 def main():

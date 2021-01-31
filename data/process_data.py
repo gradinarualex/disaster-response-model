@@ -6,12 +6,12 @@ from sqlalchemy import create_engine
 def load_data(messages_filepath, categories_filepath):
     
     # read in messages data
-    messages_df = pd.read_csv('./data/messages.csv')
+    messages_df = pd.read_csv(messages_filepath)
     # remove duplicates
     messages_df.drop_duplicates(inplace=True)
     
     # read in categories data
-    categories_df = pd.read_csv('./data/categories.csv')
+    categories_df = pd.read_csv(categories_filepath)
     # remove duplicates
     categories_df.drop_duplicates(inplace=True)
 
@@ -40,13 +40,20 @@ def clean_data(df):
         # convert column to integer
         categories[column] = categories[column].astype(int)
         
+    # safeguard to make sure all categories have either 1 or 0
+    categories = categories.clip(0, 1)
+        
+    # remove columns (cateories) where all rows have the same value (0, 1)
+    single_categ_columns = [col for col in categories.columns if len(categories[col].unique()) == 1]
+    categories = categories.drop(single_categ_columns, axis = 1)
+        
     # drop categories column from original df
     df.drop(['categories'], axis=1, inplace=True)
     # concatenate the original dataframe with the new 'categories' dataframe
     df = pd.concat([df, categories], axis=1)
     
-    # drop duplicates by grouping ID's and taking the maximum value (1 if any duplicate has 1 in column; 0 otherwise)
-    df = df.groupby(['id', 'message', 'original', 'genre'], as_index=False).max()
+    # remove duplicates
+    df.drop_duplicates(inplace=True)
     
     return df
 
