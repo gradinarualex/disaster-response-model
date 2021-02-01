@@ -4,6 +4,18 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+    ''' Function to load in messages and categories data,
+        join them and return the result. This function also
+        removes duplicates before merging datasets
+
+        Args: 
+            messages_filepath (string): path to the messages csv file.
+            categories_filepath (string): path to the categories csv file
+
+        Returns: 
+            df (DataFrame): merged dataset containing messages and categories columns
+            
+    '''
     
     # read in messages data
     messages_df = pd.read_csv(messages_filepath)
@@ -22,6 +34,18 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    ''' Function that performs data cleaning on the messages + categories DataFrame.
+        Function converts the categories column to individual columns by category,
+        converts them to 0's and 1's, removes categories with only one value
+        and finally removes duplicates in dataframes.
+
+        Args: 
+            df (DataFrame): merged dataset containing messages and categories columns
+
+        Returns: 
+            df (DataFrame): clean dataset containing messages and one binary (0 or 1) column per category
+            
+    '''
     
     # split categories into separate category columns
     categories = df['categories'].str.split(';', expand=True)
@@ -59,6 +83,18 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    ''' Function to save dataset into a database file locally.
+        Dataset saved in a table named 'messages'.
+
+        Args: 
+            df (DataFrame): DataFrame to save to disk
+            database_filename (string): path to database file to save the DataFrame in as csv
+
+        Returns: 
+            None
+            
+    '''
+    
     # save data into sql database
     path = os.getcwd()
     db_url = 'sqlite:///' + database_filename

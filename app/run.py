@@ -21,6 +21,19 @@ app = Flask(__name__)
 ## Model Classes
 
 def tokenize(text):
+    ''' Function to tokenize text.
+        This function converts all text to lower case, removes
+        non-alpha-numeric characters, removes duplicate spaces,
+        tokenizes, stems and lemmatizes words.
+
+        Args: 
+            text (string): path to a database to read in
+
+        Returns: 
+            clean_tokens (list): list of tokenized words
+            
+    '''
+    
     clean_text = text.lower() # convert all chars to lower case
     clean_text = re.sub(r"[^a-zA-Z0-9]", " ", clean_text) # remove non alpha-numeric characters
     clean_text = re.sub(' +', ' ', clean_text) # remove duplicate spaces
@@ -40,9 +53,15 @@ def tokenize(text):
     return clean_tokens
 
 class QuestionMarkCount(BaseEstimator, TransformerMixin):
+    ''' Class that creates a new feature for natural language
+        processing prediciton model. This class counts the 
+        number of question marks in a text.
+        
+        Functions: 
+            fit: returns self
+            transform: count the number of question marks and return as DataFrame
+            
     '''
-    '''
-
     def fit(self, X, y=None):
         return self
 
@@ -54,7 +73,14 @@ class QuestionMarkCount(BaseEstimator, TransformerMixin):
 
     
 class ExclamationPointCount(BaseEstimator, TransformerMixin):
-    '''
+    ''' Class that creates a new feature for natural language
+        processing prediciton model. This class counts the 
+        number of excalamtion points in a text.
+        
+        Functions: 
+            fit: returns self
+            transform: count the number of excalamtion point and return as DataFrame
+            
     '''
 
     def fit(self, X, y=None):
@@ -68,7 +94,14 @@ class ExclamationPointCount(BaseEstimator, TransformerMixin):
 
     
 class CapitalCount(BaseEstimator, TransformerMixin):
-    '''
+    ''' Class that creates a new feature for natural language
+        processing prediciton model. This class counts the 
+        number of upper case letters in a text.
+        
+        Functions: 
+            fit: returns self
+            transform: count the number of upper case letters and return as DataFrame
+            
     '''
 
     def fit(self, X, y=None):
@@ -82,7 +115,14 @@ class CapitalCount(BaseEstimator, TransformerMixin):
 
     
 class WordCount(BaseEstimator, TransformerMixin):
-    '''
+    ''' Class that creates a new feature for natural language
+        processing prediciton model. This class counts the 
+        number of words in a text.
+        
+        Functions: 
+            fit: returns self
+            transform: count the number of words and return as DataFrame
+            
     '''
 
     def fit(self, X, y=None):
