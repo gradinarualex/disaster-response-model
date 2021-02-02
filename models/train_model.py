@@ -218,7 +218,7 @@ def build_model():
 def evaluate_model(model, X_test, y_test, category_names):
     ''' Function to evaluate the performance of our model.
         Uses classification_report to get recall, precision
-        and f1-score by category and some overall averages
+        and f1-score by category and some overall averages.
         Build pipeline, defines parameters, creates and
         returns Cross Validation model.
 
