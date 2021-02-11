@@ -15,8 +15,12 @@ from plotly.graph_objs import Bar
 from sqlalchemy import create_engine
 
 from sklearn.base import BaseEstimator, TransformerMixin
-    
+
+# import custom py files
+from plots import return_graphs
+
 app = Flask(__name__)
+
 
 ## Model Classes
 
@@ -138,11 +142,11 @@ class WordCount(BaseEstimator, TransformerMixin):
 
 
 # load data
-engine = create_engine('sqlite:///../data/disaster_response.db')
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('messages', engine)
 
 # load model
-model = joblib.load(open("../models/disaster_response_model.pkl", 'rb'))
+model = joblib.load(open("../models/disaster_response_model.sav", 'rb'))
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -150,33 +154,8 @@ model = joblib.load(open("../models/disaster_response_model.pkl", 'rb'))
 @app.route('/index')
 def index():
     
-    # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
-    
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
-    graphs = [
-        {
-            'data': [
-                Bar(
-                    x=genre_names,
-                    y=genre_counts
-                )
-            ],
-
-            'layout': {
-                'title': 'Distribution of Message Genres',
-                'yaxis': {
-                    'title': "Count"
-                },
-                'xaxis': {
-                    'title': "Genre"
-                }
-            }
-        }
-    ]
+    # get graph data from plots script
+    graphs = return_graphs(df)
     
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
@@ -195,7 +174,7 @@ def go():
     # use model to predict classification for query
     classification_labels = model.predict([query])[0]
     classification_results = dict(zip(df.columns[4:], classification_labels))
-
+    
     # This will render the go.html Please see that file. 
     return render_template(
         'go.html',

@@ -140,7 +140,7 @@ def load_data(database_filepath):
     X = df['message'].values
     y = df.iloc[:, 4:].values
     
-    return X, y, labels
+    return X, y, df.iloc[:, 4:].columns
 
 
 def tokenize(text):
@@ -201,12 +201,12 @@ def build_model():
             ('capital_count', CapitalCount()),
             ('word_count', WordCount())
         ])),
-        ('clf', MultiOutputClassifier(GradientBoostingClassifier(max_depth=5, n_estimators=50, learning_rate=0.08)))
+        ('clf', MultiOutputClassifier(GradientBoostingClassifier(max_depth=8, n_estimators=100, learning_rate=0.07)))
     ])
     
     # define parameters
     parameters = {
-        'features__transformer_weights': [{'text_pipeline': 0.8, 'word_count': 0.05, 'qmark_count': 0.05, 'expoint_count': 0.05, 'capital_count': 0.05}]
+        'features__transformer_weights': [{'text_pipeline': 0.9, 'word_count': 0.025, 'qmark_count': 0.025, 'expoint_count': 0.025, 'capital_count': 0.025}]
     }
 
     # create grid search object
@@ -254,7 +254,7 @@ def save_model(model, model_filepath):
             
     '''
     
-    filename = 'disaster_response_model.pkl'
+    filename = 'disaster_response_model.sav'
     joblib.dump(model, filename)
 
 

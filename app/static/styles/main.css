@@ -1,0 +1,35 @@
+/* ============= Results section ============= */
+.results {
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    column-gap: 1em;
+    padding: 1em;
+}
+
+.results > div {
+    padding: 1em;
+}
+
+.results h2 {
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+.message-relay {
+    background: #f8f8f8;
+    margin: 1em;
+}
+
+.message-relay h2 {
+    font-weight: bold;
+}
+
+.message-relay p {
+    font-size: 1.8em;
+}
+
+.classification-labels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+}

@@ -1,15 +1,18 @@
 {% extends "master.html" %}
 {% block title %}Results{% endblock %}
 
-{% block message %}
-    <hr />
-    <h4 class="text-center">MESSAGE</h4>
-    <p class="text-center"><i>{{query}}</i></p>
-{% endblock %}
-
 {% block content %}
-    <h1 class="text-center">Result</h1>
-        <ul class="list-group">
+<div class="results">
+    <div class="message-relay">
+        {% block message %}
+        <h2 class="text-center">Message</h2>
+        <p class="text-center"><i>"{{query}}"</i></p>
+        {% endblock %}
+    </div>
+    
+    <div class="classification-results">
+        <h2 class="text-center">Labels</h2>
+        <ul class="classification-labels">
             {% for category, classification in classification_result.items() %}
                 {% if classification == 1 %}
                     <li class="list-group-item list-group-item-success text-center">{{category.replace('_', ' ').title()}}</li>
@@ -18,6 +21,6 @@
                 {% endif %}
             {% endfor %}
         </ul>
-<!--    </div> -->
-
+    </div>
+</div>
 {% endblock %}
