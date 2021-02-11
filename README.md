@@ -23,7 +23,7 @@ After requirements are installed, you can just run the following command from th
 python app/run.py
 ```
 
-To see the application, go to http://http://localhost:3001/ and you should see the app up and running.
+To see the application, go to http://localhost:3001/ and you should see the app up and running.
 
 ## **Classification Approach**
 Disaster messages fall under multiple categories, ranging from type of help requested (food, water, shelter, etc.), type of situation (refugee, missing people, death, etc.) to disaster type (storm, flood, earthquake, etc.), each with varying number of instances. This creates a data imbalance where some categories have high rate of occurance whereas some have very low occurance rate (200 out of 30.000 on fire-related messages). But occurance rate doesn't imply importance, with some rare occuring categories requiring fast action if true.
