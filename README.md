@@ -1,6 +1,7 @@
 # **Disaster Response Message Classification**
+[link to github repo](https://github.com/gradinarualex/disaster-response-model)
 
-Application that classifies messages related to disaster response from [appen](https://appen.com/datasets/combined-disaster-response-data/) and classifies them based on the type of information provided. This helps route these messages to the appropriate NGO handling every aspect of the crisis response. The model is trained on around 30,000 real messages during disasters such as floods in Pakistan in 2010, super-storm Sandy in U.S.A. in 2012, and many others. The online dashboard takes in messages and classifies them into multiple categories of the total 35.
+Application that classifies messages related to disaster response from [appen](https://appen.com/datasets/combined-disaster-response-data/) and classifies them based on the type of information provided. This helps route these messages to the appropriate NGO handling every aspect of the crisis response. The model is trained on around 30,000 real messages during disasters such as floods in Pakistan in 2010, super-storm Sandy in U.S.A. in 2012, and many others. The online dashboard takes in messages and classifies them into multiple categories of the total 35.  
 
 
 ## **Getting Started**
